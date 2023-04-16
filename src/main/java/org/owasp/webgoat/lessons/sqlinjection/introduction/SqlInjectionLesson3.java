@@ -58,8 +58,8 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
     try (Connection connection = dataSource.getConnection()) {
     try (PreparedStatement preparedStatement =
            connection.prepareStatement("UPDATE employees SET department = ? WHERE last_name = 'Barnett'")) {
-      preparedStatement.setString(1, "Sales");
-      preparedStatement.executeUpdate();
+        preparedStatement.setString(1, "Sales");
+        preparedStatement.executeUpdate();
        // statement.executeUpdate(query);
         
         ResultSet results =
