@@ -47,7 +47,7 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
   public AttackResult completed(@RequestParam String user, @RequestParam String depto) {
     return injectableQuery(user,depto);
   }
-  protected AttackResult injectableQuery(String user, String Depto) {
+  protected AttackResult injectableQuery(String user, String depto) {
     try (Connection connection = dataSource.getConnection()) {
        
         String query = "SELECT * FROM users WHERE user = ? AND depto = ?";
