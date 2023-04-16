@@ -61,25 +61,26 @@ public class SqlInjectionLesson2 extends AssignmentEndpoint {
     return injectableQuery(query);
   }
   protected AttackResult injectableQuery(String query) {
-    try (var connection = dataSource.getConnection()) {
-      try (PreparedStatement statement = connection.prepareStatement(query)) {
-        statement.setString(1, query);
-        ResultSet results = statement.executeQuery();
+    try (var connection = dataSource.getConnection();
+     PreparedStatement statement = connection.prepareStatement(query)) {
+  statement.setString(1, query);
+  ResultSet results = statement.executeQuery();
   
-         StringBuilder output = new StringBuilder();
+  StringBuilder output = new StringBuilder();
 
-      results.first();
+  results.first();
 
-      if (results.getString("department").equals("Marketing")) {
-        output.append("<span class='feedback-positive'>" + query + "</span>");
-        output.append(SqlInjectionLesson8.generateTable(results));
-        return success(this).feedback("sql-injection.2.success").output(output.toString()).build();
-      } else {
-        return failed(this).feedback("sql-injection.2.failed").output(output.toString()).build();
-      }
-    } catch (SQLException sqle) {
-      return failed(this).feedback("sql-injection.2.failed").output(sqle.getMessage()).build();
-    }
+  if (results.getString("department").equals("Marketing")) {
+    output.append("<span class='feedback-positive'>" + query + "</span>");
+    output.append(SqlInjectionLesson8.generateTable(results));
+    return success(this).feedback("sql-injection.2.success").output(output.toString()).build();
+  } else {
+    return failed(this).feedback("sql-injection.2.failed").output(output.toString()).build();
+  }
+} catch (SQLException sqle) {
+  return failed(this).feedback("sql-injection.2.failed").output(sqle.getMessage()).build();
+}
+
   }
  }
 }
