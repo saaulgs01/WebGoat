@@ -51,12 +51,12 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
     try (Connection connection = dataSource.getConnection()) {
        
         String query = "SELECT * FROM users WHERE user = ? AND depto = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement prepareStatement = connection.prepareStatement(query)) {
             Statement checkStatement =
             connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
-            statement.setString(1, user);
-            statement.setString(2, depto);
-            ResultSet resultSet = statement.executeQuery(query);
+            prepareStatement.setString(1, user);
+            prepareStatement.setString(2, depto);
+            ResultSet resultSet = prepareStatement.executeQuery(query);
         ResultSet results =
             checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
         StringBuilder output = new StringBuilder();
