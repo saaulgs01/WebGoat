@@ -56,15 +56,14 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
 
   protected AttackResult injectableQuery(String query) {
     try (Connection connection = dataSource.getConnection()) {
-      try (Statement statement =
-          connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
-        Statement checkStatement =
-            connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
+    try (PreparedStatement preparedStatement =
+           connection.prepareStatement("UPDATE employees SET department = ? WHERE last_name = 'Barnett'")) {
+      preparedStatement.setString(1, "Sales");
+      preparedStatement.executeUpdate();
        // statement.executeUpdate(query);
-        statment,executeQuery("UPDATE employees SET department = 'Sales' WHERE last_name = 'Barnett'")    
-//        statement.executeUpdate(query);
+        
         ResultSet results =
-            checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
+            preparedStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
         StringBuilder output = new StringBuilder();
         // user completes lesson if the department of Tobi Barnett now is 'Sales'
         results.first();
