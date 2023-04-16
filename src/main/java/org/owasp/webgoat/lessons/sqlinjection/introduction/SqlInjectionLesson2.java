@@ -57,14 +57,14 @@ public class SqlInjectionLesson2 extends AssignmentEndpoint {
 
   @PostMapping("/SqlInjection/attack2")
   @ResponseBody
-  public AttackResult completed(@RequestParam String department) {
-    return injectableQuery(department);
+  public AttackResult completed(@RequestParam String query) {
+    return injectableQuery(query);
   }
   protected AttackResult injectableQuery(String department) {
     try (var connection = dataSource.getConnection()) {
-      try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM employees WHERE department = ?")) {
-        statement.setString(1, query.department);
-         ResultSet results = statement.executeQuery();
+      try (PreparedStatement statement = connection.prepareStatement(query)) {
+        statement.setString(1, query);
+        ResultSet results = statement.executeQuery();
   
          StringBuilder output = new StringBuilder();
 
