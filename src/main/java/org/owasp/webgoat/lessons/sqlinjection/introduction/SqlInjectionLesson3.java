@@ -26,7 +26,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 import org.owasp.webgoat.container.LessonDataSource;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.container.assignments.AssignmentHints;
@@ -44,19 +43,20 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
   }
   @PostMapping("/SqlInjection/attack3")
   @ResponseBody
-  public AttackResult completed(@RequestParam String user, @RequestParam String depto) {
-    return injectableQuery(user,depto);
-  }
-  protected AttackResult injectableQuery(String user, String depto) {
+  public AttackResult completed(
+
+
+@RequestParam String query) {
+    return injectableQuery(query);
+ }
+  protected AttackResult injectableQuery(String query) {
     try (Connection connection = dataSource.getConnection()) {
-       
-        String query = "SELECT * FROM users WHERE user = ? AND depto = ?";
-        try (PreparedStatement prepareStatement = connection.prepareStatement(query)) {
-            Statement checkStatement =
+      try (Statement statement =
+          connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
+        Statement checkStatement =
             connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
-            prepareStatement.setString(1, user);
-            prepareStatement.setString(2, depto);
-            ResultSet resultSet = prepareStatement.executeQuery(query);
+        statement.executeUpdate(query);
+
         ResultSet results =
             checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
         StringBuilder output = new StringBuilder();
