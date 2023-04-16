@@ -83,5 +83,5 @@ public class SqlInjectionLesson2 extends AssignmentEndpoint {
 
   }
  }
-}
+
 
