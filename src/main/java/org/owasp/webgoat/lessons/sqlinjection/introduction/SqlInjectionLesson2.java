@@ -66,7 +66,7 @@ public class SqlInjectionLesson2 extends AssignmentEndpoint {
       try (PreparedStatement statement = connection.prepareStatement(query)) {
          statement.setString(1, username);
          statement.setString(2, password);
-         ResultSet result = statement.executeQuery();
+         ResultSet results = statement.executeQuery();
     } 
       StringBuilder output = new StringBuilder();
 
