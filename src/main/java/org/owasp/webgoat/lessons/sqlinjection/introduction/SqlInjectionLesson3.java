@@ -19,17 +19,13 @@
  *
  * Source for this application is maintained at https://github.com/WebGoat/WebGoat, a repository for free software projects.
  */
-
 package org.owasp.webgoat.lessons.sqlinjection.introduction;
-
 import static java.sql.ResultSet.CONCUR_READ_ONLY;
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 import org.owasp.webgoat.container.LessonDataSource;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.container.assignments.AssignmentHints;
@@ -38,33 +34,40 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 @RestController
 @AssignmentHints(value = {"SqlStringInjectionHint3-1", "SqlStringInjectionHint3-2"})
 public class SqlInjectionLesson3 extends AssignmentEndpoint {
-
   private final LessonDataSource dataSource;
-
   public SqlInjectionLesson3(LessonDataSource dataSource) {
     this.dataSource = dataSource;
   }
-
   @PostMapping("/SqlInjection/attack3")
   @ResponseBody
-  public AttackResult completed(@RequestParam String query) {
-    return injectableQuery(query);
-  } 
-
-  protected AttackResult injectableQuery(String query) {
+  public AttackResult completed(
+1
+@RequestParam String 
+2
+query) {
+    return 
+3
+injectableQuery(query);
+  }
+  protected AttackResult 
+4
+injectableQuery(
+5
+String query) {
     try (Connection connection = dataSource.getConnection()) {
-    try (PreparedStatement preparedStatement =
-           connection.prepareStatement("UPDATE employees SET department = ? WHERE last_name = 'Barnett'")) {
-        preparedStatement.setString(1, "Sales");
-        preparedStatement.executeUpdate();
-       // statement.executeUpdate(query);
+      try (Statement statement =
+          connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
+        Statement checkStatement =
+            connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
         
+6
+statement.executeUpdate(query);
+Change this code to not construct SQL queries directly from user-controlled data.
         ResultSet results =
-            preparedStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
+            checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
         StringBuilder output = new StringBuilder();
         // user completes lesson if the department of Tobi Barnett now is 'Sales'
         results.first();
@@ -75,7 +78,6 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
         } else {
           return failed(this).output(output.toString()).build();
         }
-
       } catch (SQLException sqle) {
         return failed(this).output(sqle.getMessage()).build();
       }
