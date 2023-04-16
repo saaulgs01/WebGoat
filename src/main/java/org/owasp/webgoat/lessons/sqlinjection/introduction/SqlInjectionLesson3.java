@@ -54,7 +54,7 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
         String depto = "Sales";
         String query = "SELECT * FROM users WHERE user = ? AND depto = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            try (Statement checkStatement =
+            Statement checkStatement =
             connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
             statement.setString(1, user);
             statement.setString(2, depto);
