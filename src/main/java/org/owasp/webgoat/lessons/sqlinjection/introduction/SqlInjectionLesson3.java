@@ -60,8 +60,7 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
           connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
         Statement checkStatement =
             connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
-        PreparedStatment ps = connection.prepareStatment(query);
-        ps.executeUpdate();
+//        statement.executeUpdate(query);
             
 //        statement.executeUpdate(query);
         ResultSet results =
