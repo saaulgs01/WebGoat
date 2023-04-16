@@ -44,13 +44,12 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
   }
   @PostMapping("/SqlInjection/attack3")
   @ResponseBody
-  public AttackResult completed() {
-    return injectableQuery();
+  public AttackResult completed(@RequestParam String user, @RequestParam String depto) {
+    return injectableQuery(user,depto);
   }
-  protected AttackResult injectableQuery() {
+  protected AttackResult injectableQuery(String user, String Depto) {
     try (Connection connection = dataSource.getConnection()) {
-        String user = "Tobi Barnett";
-        String depto = "Sales";
+       
         String query = "SELECT * FROM users WHERE user = ? AND depto = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             Statement checkStatement =
