@@ -44,9 +44,8 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
   }
   @PostMapping("/SqlInjection/attack3")
   @ResponseBody
-  public AttackResult completed(
-  @RequestParam String query) {
-    return injectableQuery(query);
+  public AttackResult completed() {
+    return injectableQuery();
   }
   protected AttackResult injectableQuery() {
     try (Connection connection = dataSource.getConnection()) {
