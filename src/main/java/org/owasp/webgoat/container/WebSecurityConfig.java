@@ -46,10 +46,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /** Security configuration for WebGoat. */
 @Configuration
-@AllArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
+    
   private final UserService userDetailsService;
 
   @Override
