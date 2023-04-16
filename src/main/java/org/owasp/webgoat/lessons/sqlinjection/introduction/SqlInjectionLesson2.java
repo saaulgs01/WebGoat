@@ -19,16 +19,12 @@
  *
  * Source for this application is maintained at https://github.com/WebGoat/WebGoat, a repository for free software projects.
  */
-
 package org.owasp.webgoat.lessons.sqlinjection.introduction;
-
 import static java.sql.ResultSet.CONCUR_READ_ONLY;
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import org.owasp.webgoat.container.LessonDataSource;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.container.assignments.AssignmentHints;
@@ -37,8 +33,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import java.sql.PreparedStatement;
-
 @RestController
 @AssignmentHints(
     value = {
@@ -48,40 +42,32 @@ import java.sql.PreparedStatement;
       "SqlStringInjectionHint2-4"
     })
 public class SqlInjectionLesson2 extends AssignmentEndpoint {
-
   private final LessonDataSource dataSource;
-
   public SqlInjectionLesson2(LessonDataSource dataSource) {
     this.dataSource = dataSource;
   }
-
   @PostMapping("/SqlInjection/attack2")
   @ResponseBody
-  public AttackResult completed(@RequestParam String query) {
+  public AttackResult completed(
+@RequestParam String query) {
     return injectableQuery(query);
   }
   protected AttackResult injectableQuery(String query) {
-    try (var connection = dataSource.getConnection();
-     PreparedStatement statement = connection.prepareStatement(query)) {
-  statement.setString(1, query);
-  ResultSet results = statement.executeQuery();
-  
-  StringBuilder output = new StringBuilder();
-
-  results.first();
-
-  if (results.getString("department").equals("Marketing")) {
-    output.append("<span class='feedback-positive'>" + query + "</span>");
-    output.append(SqlInjectionLesson8.generateTable(results));
-    return success(this).feedback("sql-injection.2.success").output(output.toString()).build();
-  } else {
-    return failed(this).feedback("sql-injection.2.failed").output(output.toString()).build();
+    try (var connection = dataSource.getConnection()) {
+      Statement statement = connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
+      ResultSet results = 
+          statement.executeQuery(query);
+      StringBuilder output = new StringBuilder();
+      results.first();
+      if (results.getString("department").equals("Marketing")) {
+        output.append("<span class='feedback-positive'>" + query + "</span>");
+        output.append(SqlInjectionLesson8.generateTable(results));
+        return success(this).feedback("sql-injection.2.success").output(output.toString()).build();
+      } else {
+        return failed(this).feedback("sql-injection.2.failed").output(output.toString()).build();
+      }
+    } catch (SQLException sqle) {
+      return failed(this).feedback("sql-injection.2.failed").output(sqle.getMessage()).build();
+    }
   }
-} catch (SQLException sqle) {
-  return failed(this).feedback("sql-injection.2.failed").output(sqle.getMessage()).build();
 }
-
-  }
- }
-
-
