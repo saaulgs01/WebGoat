@@ -48,15 +48,15 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
   @RequestParam String query) {
     return injectableQuery(query);
   }
-  protected AttackResult injectableQuery(String query) {
+  protected AttackResult injectableQuery() {
     try (Connection connection = dataSource.getConnection()) {
-      try (Statement checkStatement =
-            connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
         String query = "SELECT * FROM users WHERE user = ? AND pass = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (Statement checkStatement =
+            connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
             statement.setString(1, user);
             statement.setString(2, pass);
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery();
         ResultSet results =
             checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
         StringBuilder output = new StringBuilder();
