@@ -29,7 +29,6 @@
  * @since December 12, 2015
  */
 package org.owasp.webgoat.container;
-
 import lombok.AllArgsConstructor;
 import org.owasp.webgoat.container.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +41,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 /** Security configuration for WebGoat. */
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
   private final UserService userDetailsService;
-
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry security =
@@ -78,30 +74,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .permitAll();
     security.and().logout().deleteCookies("JSESSIONID").invalidateHttpSession(true);
     security.and().csrf().disable();
-
     http.headers().cacheControl().disable();
     http.exceptionHandling().authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/login"));
   }
-
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    auth.userDetailsService(userDetailsService);
   }
-
   @Bean
   @Override
   public UserDetailsService userDetailsServiceBean() throws Exception {
     return userDetailsService;
   }
-
   @Override
   @Bean
   protected AuthenticationManager authenticationManager() throws Exception {
     return super.authenticationManager();
   }
-
+  @SuppressWarnings("deprecation")
   @Bean
-  public BCryptPasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+  public NoOpPasswordEncoder passwordEncoder() {
+    return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
   }
 }
