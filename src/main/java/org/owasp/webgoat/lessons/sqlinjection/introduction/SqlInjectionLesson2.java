@@ -64,8 +64,7 @@ public class SqlInjectionLesson2 extends AssignmentEndpoint {
   protected AttackResult injectableQuery(String query) {
     try (var connection = dataSource.getConnection()) {
       try (PreparedStatement statement = connection.prepareStatement(query)) {
-         statement.setString(1, employees);
-         statement.setString(2, userid);
+        statement.setString(1, query.department);
          ResultSet results = statement.executeQuery();
     } 
       StringBuilder output = new StringBuilder();
