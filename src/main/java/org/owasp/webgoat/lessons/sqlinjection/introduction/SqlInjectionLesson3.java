@@ -44,28 +44,16 @@ public class SqlInjectionLesson3 extends AssignmentEndpoint {
   @PostMapping("/SqlInjection/attack3")
   @ResponseBody
   public AttackResult completed(
-1
-@RequestParam String 
-2
-query) {
-    return 
-3
-injectableQuery(query);
+  @RequestParam String query) {
+    return injectableQuery(query);
   }
-  protected AttackResult 
-4
-injectableQuery(
-5
-String query) {
+  protected AttackResult injectableQuery(String query) {
     try (Connection connection = dataSource.getConnection()) {
       try (Statement statement =
           connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
         Statement checkStatement =
             connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
-        
-6
-statement.executeUpdate(query);
-Change this code to not construct SQL queries directly from user-controlled data.
+        statement.executeUpdate(query);
         ResultSet results =
             checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
         StringBuilder output = new StringBuilder();
