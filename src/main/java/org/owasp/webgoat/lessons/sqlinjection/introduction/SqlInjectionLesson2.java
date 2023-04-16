@@ -81,4 +81,4 @@ public class SqlInjectionLesson2 extends AssignmentEndpoint {
       return failed(this).feedback("sql-injection.2.failed").output(sqle.getMessage()).build();
     }
   }
-}
+
